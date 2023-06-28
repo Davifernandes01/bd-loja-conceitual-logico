@@ -1,0 +1,109 @@
+objeito:
+
+realiazar o controle centralizado de alunos, prof, cursos, disciplinas, historico escolar e turmas
+
+regras de negocio
+
+.um aluno so pode estar matriculado em um curso por vez
+.alunos possuem um codido de identifição(ra)
+.cursos são compostos por disciplina
+.cada disciplina terá no maximo 30 anos por turma
+.as disciplinas podm ser obrigatorias ou optativas,dependendo do curso
+.as disciplinas pertencem a departamentos especificos
+.cada disciplina possui um codigo de identifição 
+.alunos matriculados podem trancar matricula, não estando então matrciualdos em nenhuma disciplina no semestre
+.em cada semestre. cada aluno pode se matricular em no maximo 9 disciplinas
+.o aluno so pode ser reprovado no maximo 3x na mesma disciplina
+.a faculdade terá no maximo 3.000 alunos matriculados simultaneamente, em 10 cursos distintos
+.entram 300 anos novos por ano
+.existem 90 disciplinas no total disponiveis
+.um historico escolar tras todas as disciplinas cursadas por um aluno, incluindo nota final, frequencia e periodo de curso realizados
+.professores podem ser cadastrados mesmo sem lecionar disciplinas
+.existem 40 professores trabalhando na escola
+.cada professor ira lecionar no maximo 4 disciplinas diferentes
+.cada professor é vinculado á um departamento
+.professores são identificados por um codigo de professor
+
+entidades, atributos, relacionamentos:
+
+entidades -> Aluno, Professor, Disciplina , Curso, Departamento
+
+relacionamentos:
+alunos esta matriculado em um curso
+aluno cursa disciplina
+aluno realizou disciplina
+disciplina pertence a curso
+professor ministra disciplina
+professor pertence a departamento
+departamento é responsavel por disciplina
+departamento controla curso
+disciplina depende da disciplina 
+
+atributos:
+
+aluno -> 
+numero da matricula
+nome
+sobrenome
+endereço:
+ .rua
+ .numero
+ .bairro
+ .cep
+ .cidade
+telefone
+cpf
+status
+filiação
+sexo
+contato
+cod_turma
+
+
+professor ->
+codido do professor
+nome
+sobre nome
+codigo do departamento
+status
+
+disciplina ->
+codigo da disciplina
+nome da disciplina
+descrição curricular
+codigo do departamento
+numero de alunos
+carga horaria
+
+curso ->
+codigo do curso
+nome do curso
+codigo do departamento
+
+
+departamento ->
+codigo do departamento
+nome do departamento
+
+historico ->
+cod historico
+notas
+media
+frequencia
+periodo realização
+RA
+cod disciplina
+
+turma ->
+cod turma
+periodo
+cod curso
+numero de alunos
+data inicio
+data fim
+
+
+
+
+
+
