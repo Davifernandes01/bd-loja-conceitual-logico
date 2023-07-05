@@ -10,3 +10,4 @@ add CONSTRAINT fk_cliente_produto_cliente FOREIGN key(id_cliente) REFERENCES Cli
 
 alter TABLE Cliente_produto
 add CONSTRAINT fk_cliente_produto_produto FOREIGN key(id_produto) REFERENCES Produto(id_produto)
+
