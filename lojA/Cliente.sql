@@ -9,4 +9,18 @@ create table Cliente(
   email varchar(50) not null
 
 )
+/*
+alter TABLE Cliente
+add CONSTRAINT un_cpf unique (cpf)
 
+alter table Cliente
+add CONSTRAINT un_email UNIQUE(email)
+
+insert into Cliente(
+  nome, sobrenome, sexo, data_nascimento, cpf, email
+)values(
+  'rada', 'manthys', 'M', '16/03/2007', '123.265.945.76', 'rada@gmail.com.com'
+)
+
+select * from Cliente
+/*
