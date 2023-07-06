@@ -6,3 +6,4 @@ create table Endereco(
   cep VARCHAR(9) not null,
   cidade varchar(30) not NULL
 )
+
