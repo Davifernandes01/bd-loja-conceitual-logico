@@ -111,5 +111,13 @@ p.data_pedido, sp.descricao
         ORDER by c.nome
         
       
+BEGIN
+    -- Instrução 1
+    -- Instrução 2
+    -- Instrução 3
 
+    COMMIT;
+    -- ou
+    ROLLBACK;
+END
 
