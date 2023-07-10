@@ -103,21 +103,72 @@ p.id_pedido,
 p.data_pedido, sp.descricao
     from Pedidos p
       inner join Status_pedido sp on p.id_status = sp.id_status
-      inner join Carrinho_cliente_produto ccp on p.id_carrinho_cliente_produto = ccp.id_carrinho_produto
+      inner join Carrinho_cliente_produto ccp on  ccp.id_carrinho_produto = p.id_carrinho_cliente_produto    --p.id_carrinho_cliente_produto = ccp.id_carrinho_produto
       inner join Cliente_produto cp on ccp.id_cliente_produto = cp.id_cliente_produto
       inner join Cliente c on cp.id_cliente = c.id_cliente
       inner join Produto pp on cp.id_produto = pp.id_produto
      -- where sp.descricao = 'aprovado'
         ORDER by c.nome
         
-      
-BEGIN
-    -- Instrução 1
-    -- Instrução 2
-    -- Instrução 3
 
-    COMMIT;
-    -- ou
-    ROLLBACK;
-END
+--clasula in -- mostra os ids dentro da clasula in
+SELECT * from Cliente
+where id_cliente in(1,8,6)
 
+--clasula not in -- n mostra os ids dentro da clasula not in
+SELECT * from Cliente
+WHERE id_cliente not in(1,8,6,7,2)
+
+--distinct -- mostra o resultado sem repetir
+SELECT distinct DATEPART(YEAR, data_nascimento) from Cliente
+ORDER by 1 -- crescente
+
+SELECT distinct DATEPART(YEAR, data_nascimento) from Cliente
+ORDER by 1 DESC --decrscente
+
+--lista complenta de clientes
+
+SELECT c.id_cliente
+      ,c.nome,
+      c.sexo,
+      cp.id_cliente_produto,
+      p.nome as nome_produto,
+      ccp.quantidade_produto,
+      p.descricao,
+      p.preco
+  from Cliente_produto cp
+    INNER join Cliente  c on c.id_cliente = cp.id_cliente
+    inner join Produto p on p.id_produto = cp.id_produto
+    --WHERE c.sexo = 'M'
+    INNER join Carrinho_cliente_produto ccp on ccp.id_cliente_produto = cp.id_cliente_produto
+    ORDER by c.id_cliente
+  
+
+  SELECT * from Produto
+  WHERE id_produto = 3
+
+--quantos cada produto vendeu no total, e a quantidade de produto no total
+  SELECT p.id_produto,
+         p.nome,
+        p.preco,
+        SUM(ccp.quantidade_produto) as total_produtos_vendidos,
+       round(SUM(p.preco * ccp.quantidade_produto),2) as total_vendido_em_reais
+    From Carrinho_cliente_produto ccp
+     inner join Cliente_produto cp on cp.id_produto = ccp.id_cliente_produto
+     inner join Produto p on p.id_produto = cp.id_produto
+     --WHERE p.id_produto = 10
+   GROUP by p.id_produto,p.nome,p.preco
+     ORDER by 1
+
+--total de produtos vendido em cada ano
+ SELECT 
+        SUM(ccp.quantidade_produto) as total_produtos_vendidos,
+       round(SUM(p.preco * ccp.quantidade_produto),2) as total_vendido_em_reais,
+       YEAR(cc.data_insercao) as data
+    From Carrinho_cliente_produto ccp
+     inner join Cliente_produto cp on cp.id_produto = ccp.id_cliente_produto
+     inner join Produto p on p.id_produto = cp.id_produto
+     inner join Carrinho cc on cc.id_carrinho = ccp.id_carrinho
+     --WHERE p.id_produto = 10
+   GROUP by YEAR(cc.data_insercao)
+    
