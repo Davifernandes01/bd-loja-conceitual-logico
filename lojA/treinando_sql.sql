@@ -171,4 +171,67 @@ SELECT c.id_cliente
      inner join Carrinho cc on cc.id_carrinho = ccp.id_carrinho
      --WHERE p.id_produto = 10
    GROUP by YEAR(cc.data_insercao)
-    
+
+--mostrando o total gasto em cada produto que os clientes compraram
+  SELECT c.nome as nome_cliente,cp.id_cliente_produto,p.nome,sum(p.preco) as total
+    from Cliente_produto cp
+      inner join Produto p on p.id_produto = cp.id_produto
+      inner join Cliente c on c.id_cliente = cp.id_cliente
+      group by cp.id_cliente_produto, c.nome,p.nome
+      ORDER by c.nome
+
+
+SELECT c.nome as nome_cliente,cp.id_cliente_produto,p.nome,max(p.preco) as total
+    from Cliente_produto cp
+      inner join Produto p on p.id_produto = cp.id_produto
+      inner join Cliente c on c.id_cliente = cp.id_cliente
+      group by cp.id_cliente_produto, c.nome,p.nome
+      ORDER by c.nome
+
+  SELECT p.nome, avg(p.preco)
+  FROM Produto p
+  GROUP by p.nome
+
+--charindex
+
+  SELECT * from Cliente
+
+  SELECT c.nome, CHARINDEX('Amanda', c.nome)
+    from Cliente c
+    WHERE CONVERT(INT, CHARINDEX('amanda', c.nome, 1)) > 0
+
+SELECT c.nome, CHARINDEX('Carlos', c.nome, 1)
+from Cliente c
+WHERE CHARINDEX('Carlos', c.nome, 1) <> '0'
+
+--concat
+
+select CONCAT('davi', ' ', 'fernandes')
+
+SELECT CONCAT('davi', ' || ', 'fernades')
+
+SELECT 'davi' + ' ' + 'fernades'
+
+SELECT CONCAT(c.nome, ' - ', t.numero)
+  From Telefone t
+    inner JOIN Cliente c on c.id_cliente  = t.id_cliente
+
+--concat_ws
+
+SELECT CONCAT_WS(' - ', 'davi', 'fernandes', 'furtado')
+
+
+SELECT CONCAT_WS(' - ', c.nome, c.sobrenome, 'PRODUTO :' + trim(CONVERT(char, p.nome )),
+'DESCRIÇÃO:' + trim(CONVERT(char, p.descricao)))
+  from Cliente_produto cp
+  inner join Cliente c on c.id_cliente = cp.id_cliente
+  inner join Produto p on p.id_produto = cp.id_produto
+
+
+
+--diferences(0 a 4)
+
+
+SELECT DIFFERENCE('davi',  'david')
+SELECT DIFFERENCE('davi', 'deivid')
+
