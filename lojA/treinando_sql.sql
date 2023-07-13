@@ -235,3 +235,141 @@ SELECT CONCAT_WS(' - ', c.nome, c.sobrenome, 'PRODUTO :' + trim(CONVERT(char, p.
 SELECT DIFFERENCE('davi',  'david')
 SELECT DIFFERENCE('davi', 'deivid')
 
+--funcçao format (retorna um valor formatado  e a cultura opcional, se especificar)
+--para dados do tipos gerais usar CAST ou CONVERT 
+
+SELECT CONVERT(char, GETDATE(), 103)'d', 'en-US' AS USA
+
+/*
+declare @dt datetime = getdate()
+
+SELECT FORMAT(@dt, 'd', 'en-US') AS USA
+  ,FORMAT(@dt, 'd', 'zh-cn') as china
+  ,FORMAT(@dt, 'd', 'de-de') as alemanha
+  ,FORMAT(@dt, 'D','en-US') as "USA por extenso"
+  ,FORMAT(@dt, 'D', 'zh-cn') as "china por extenso"
+  ,FORMAT(@dt, 'D', 'de-de') as "alemanha ppor extenso"
+*/
+
+
+declare @dt datetime = getdate()
+SELECT FORMAT(6426394,'##-####-##') as prod
+
+SELECT FORMAT(p.preco, 'N', 'en-US') as "formato americano",
+      FORMAT(p.preco,'G', 'en-US') as geral, FORMAT(p.preco, 'C','pt-br') as "formato br",
+      p.preco
+  from Produto p
+
+--left(extrai um caractere a esquerda de um texto ou campo)
+
+SELECT left('davi', 3)
+
+SELECT distinct LEFT(c.nome, 3) from Cliente c
+
+
+--rigth(extrai caracteres a direita de um testo ou campo)
+
+SELECT RIGHT('davi fernandes furtado rodrigues', 12)
+
+
+SELECT distinct RIGHT(c.nome, 5) from Cliente c
+
+--LEN(retorna o tamanho do campo)
+
+SELECT LEN('davi fernandes furtado rodrigues')
+
+SELECT c.nome, LEN(c.nome) as tamanho
+  from Cliente c 
+
+SELECT MAX(LEN(c.nome)) as maior
+  from Cliente c
+
+  SELECT MIN(LEN(c.nome)) as menor
+  from Cliente c
+
+
+--upper- coloca os caracteres me maiusculo
+
+SELECT UPPER('davi fgsbdj vpnbg')
+
+SELECT c.nome, UPPER(c.nome) from Cliente c
+
+
+--lower - coloca os caracteres em minusculo
+
+select LOWER('JKSCGK HLFNMICDNVXCVNIN')
+
+--ltrim
+
+SELECT LTRIM('   davi fernades furtado')@
+
+declare @varTexto VARCHAR(50)
+  set @varTexto = '              TEXTO DO LTRIM'
+
+
+SELECT LTRIM(@varTexto)
+SELECT resultado = LTRIM(@varTexto)
+
+--rtrim
+
+select len(RTRIM('davi          '))
+select len('davi          x')
+
+
+declare @varTesto2 VARCHAR(50)
+set @varTesto2 = 'rada é o melhor espectro          '
+SELECT RTRIM(@varTesto2)
+SELECT LEN(RTRIM(@varTesto2))
+
+
+--patindex(retorna a posição inicial da primeira ocorrencia de padrao)
+
+SELECT PATINDEX('%nan%', 'davi fernandes')
+
+SELECT PATINDEX('%s', 'davi fernandes')
+
+SELECT PATINDEX('a%', 'ana ok')
+
+SELECT PATINDEX('%vi_fer%', 'davi fernandes')
+
+declare @varTesto3 VARCHAR(100)
+  set @varTesto3 ='eu sou radamanthys de wyvern o maior de todos'
+
+--substring
+
+SELECT SUBSTRING(@varTesto3, PATINDEX('%radamanthys%',@varTesto3),7)
+
+--replace
+
+SELECT REPLACE('davi fernandes', 'a', 'x')
+
+SELECT REPLACE(REPLACE('davi fernandes','a','x'), 'n',';')
+
+SELECT c.nome, c.data_nascimento, c.sexo
+  FROM Cliente c
+
+  SELECT c.nome, c.data_nascimento, REPLACE(c.sexo, 'M','MASCULINO') as sexo
+  FROM Cliente c
+
+
+DECLARE @cpf VARCHAR(15)
+set @cpf = '333.222.444-23'
+
+SELECT REPLACE(REPLACE(@cpf,'.', ''), '-', '') 
+
+
+--REPLICATE
+SELECT REPLICATE('x',20)
+
+
+--tamanho de coluna fixo em 50 posições
+
+SELECT * from Cliente
+
+SELECT LEN(nome) from Cliente
+
+SELECT nome + REPLICATE('x', 10 - LEN(nome)) from Cliente 
+
+--reverse
+
+select REVERSE('davi fernandes')
