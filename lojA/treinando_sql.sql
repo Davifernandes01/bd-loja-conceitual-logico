@@ -373,3 +373,114 @@ SELECT nome + REPLICATE('x', 10 - LEN(nome)) from Cliente
 --reverse
 
 select REVERSE('davi fernandes')
+
+
+--space
+
+select 'davi' + SPACE(25)
+
+
+DECLARE @varNome VARCHAR(50)
+set @varNome = 'davi fernandes'
+
+SELECT @varNome + SPACE(50- LEN(@varNome))
+
+SELECT c.nome  + SPACE(59 - LEN(c.nome)) + c.sexo, LEN(c.nome + SPACE(59-LEN(c.nome)) + c.sexo)
+  from Cliente c
+
+
+--string_agg (concatena os valores das expressoes de cadeia de caractere e coloca os valores do separador entre eles)
+
+
+select STRING_AGG(CONVERT(nvarchar(max),sexo), ',') as registro
+from Cliente
+
+select STRING_AGG(CONVERT(nvarchar(max), ISNULL(sexo, 'N')), '-') as registro
+from Cliente
+
+select DATEPART(year, c.data_nascimento) as ano, 
+STRING_AGG(CONVERT(nvarchar(max), ISNULL(c.sexo, '0')), ' - ') as registro
+FROM Cliente c
+group by DATEPART(YEAR, c.data_nascimento)
+order by 1
+
+--WITHIN
+SELECT DATEPART(YEAR, c.data_nascimento) as ano, 
+        STRING_AGG(CONVERT(nvarchar(max), ISNULL(c.sexo,'0')), '-')
+        WITHIN GROUP(order by DATEPART(year,c.data_nascimento) asc) as registro
+  from Cliente c
+  group by DATEPART(YEAR, c.data_nascimento)
+
+
+--stuff
+
+
+declare @vProcura VARCHAR(50)
+DECLARE @vSub VARCHAR(30)
+
+set @vProcura = 'eu, xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, autorizo ...'
+set @vSub = 'davi fernandes '
+
+SELECT STUFF(@vProcura,5,30, @vSub+SPACE(30 -  LEN(@vSub)))
+
+SELECT STUFF(@vProcura,5,30,trim(@vSub + SPACE(30 - LEN(@vSub))))
+
+
+--substring
+
+SELECT SUBSTRING('davi fernandes',1,4) as nome
+
+
+SELECT p.nome, SUBSTRING(p.nome, 1,10)
+  from Produto p
+
+
+  select p.nome,
+       case SUBSTRING(p.nome,1,CHARINDEX(' ',p.nome, CHARINDEX(' ', p.nome)+1))
+        when '' then 
+        p.nome
+        else  
+        SUBSTRING(p.nome,1,CHARINDEX(' ',p.nome, CHARINDEX(' ', p.nome)+1))
+      
+      END as nome_parcial
+
+    from Produto p
+
+
+    --iif
+
+    SELECT p.nome,
+        IIF(SUBSTRING(p.nome,1,CHARINDEX(' ', p.nome, CHARINDEX(' ',p.nome) +1)) = '',
+        p.nome,
+        SUBSTRING(p.nome,1,CHARINDEX(' ',p.nome, CHARINDEX(' ', p.nome)+1)))
+      from Produto p
+
+
+--translate
+
+select replace('2*[4*3]/{7-2}','[]{}','()()')
+
+SELECT TRANSLATE('abcdefghi','abc','123')
+
+declare @vConta VARCHAR(40)
+set @vConta = '2*[4*3]/{7-2}'
+
+
+SELECT TRANSLATE(@vConta,'[]{}', '()()')
+
+
+--trim 
+
+select TRIM('  rada fernandes              ')
+
+--while
+
+declare @vString VARCHAR(100)
+set @vString = 'SQL           SERVER        |'
+
+WHILE CHARINDEX('  ', @vString) > 0 
+BEGIN
+    set @vString  = REPLACE(@vString,'  ',' ')
+end
+
+select @vString
