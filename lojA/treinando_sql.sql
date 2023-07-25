@@ -484,3 +484,488 @@ BEGIN
 end
 
 select @vString
+
+
+--SEQUENCES
+
+SELECT * FROM Cliente
+
+
+SELECT max(id_cliente) + 1 from Cliente
+
+---------------------
+
+create SEQUENCE seq_Cliente
+
+SELECT next VALUE for seq_Cliente 
+
+drop sequence  seq_Cliente
+
+create SEQUENCE sql_Cliente02
+  as NUMERIC
+  start with 1
+  increment by 1
+
+drop SEQUENCE sql_Cliente02
+
+  SELECT next value for sql_Cliente02
+
+
+  create SEQUENCE teste03
+    START WITH 100
+    increment by -1
+
+
+SELECT next value for teste03
+
+--valores minimos e maximos
+
+create SEQUENCE teste
+  START WITH 1
+  increment by 1
+  minvalue  1
+  maxvalue  1000
+  cycle --no cycle
+  cache 3 -- no cache
+
+SELECT next value for teste
+
+--alterar uma SEQUENCE
+
+alter sequence teste
+  RESTART with 100
+  maxvalue 10000
+  no cache
+
+
+  --consultar sequences
+
+  SELECT * from sys.sequences
+
+  --reiniciar a sequence
+
+  alter sequence teste
+  RESTART with 100
+
+
+
+  SELECT * from Cliente
+
+  select MAX(id_cliente) from cliente
+
+  create SEQUENCE Clientes
+  start with 56
+  increment by 1
+
+  --identificar campos de tabelas
+
+  exec sp_columns Cliente
+
+
+--DELETE E SUAS VARIAÇÕES
+
+select  * into tbDelete
+  from Cliente
+
+  delete from tbDelete
+
+  --drop TABLE tbDelete
+
+  delete from tbDelete
+  where nome like '%nan%'
+
+  delete from tbDelete
+  where nome like '%ana%'
+
+  delete from tbDelete
+  where nome = 'ana'
+
+SELECT * from tbDelete
+
+---------------------------------------------------------------------------------
+SELECT tb.nome, tb.sexo, cp.id_cliente_produto
+  from tbDelete tb
+   INNER join Cliente_produto cp on cp.id_cliente = tb.id_cliente
+   order by tb.nome
+
+--delete com select
+
+DELETE from tbDelete
+  where id_cliente not in (
+
+      SELECT tb.id_cliente
+  from tbDelete tb
+   INNER join Cliente_produto cp on cp.id_cliente = tb.id_cliente
+   
+
+  )
+
+-------------------------
+  SELECT tb.nome, tb.sexo, ce.id_cliente_endereco, t.id_telefone
+    from tbDelete tb
+    inner join Cliente_Endereco ce on ce.id_cliente = tb.id_cliente
+    inner join Telefone t on  t.id_cliente= tb.id_cliente
+
+
+--delete com select
+
+delete from tbDelete
+where id_cliente not in (
+
+    SELECT tb.id_cliente
+    from tbDelete tb
+    inner join Cliente_Endereco ce on ce.id_cliente = tb.id_cliente
+    inner join Telefone t on  t.id_cliente= tb.id_cliente
+
+
+)
+
+SELECT * from tbDelete
+
+--alunos com idade maior que 33 anos
+SELECT tb.nome, DATEDIFF(YEAR, data_nascimento, GETDATE()) as idade
+  from tbDelete tb
+  where  DATEDIFF(year, data_nascimento, GETDATE()) > 33
+  ORDER by 2
+
+delete from tbDelete
+where DATEDIFF(year,data_nascimento,GETDATE()) > 33
+
+----------------------------------
+DELETE from tbDelete
+where id_cliente in (
+
+ SELECT tb.id_cliente
+    from tbDelete tb
+        where  DATEDIFF(year, data_nascimento, GETDATE()) > 29
+
+)
+     
+drop table tbDelete
+
+SELECT * from sys.tables
+
+SELECT * into tbDelete
+from Produto
+
+
+drop table tbDelete
+
+--apagando sequences
+
+SELECT * from sys.sequences
+
+drop sequence Clientes
+
+SELECT * from sys.key_constraints
+
+
+SELECT * into tbDelete 
+from Cliente
+
+EXEC sp_columns tbDelete
+
+--adicionando uma coluna
+
+select * from tbDelete
+
+alter table tbDelete
+  add dinheiro NUMERIC(10)
+
+  update tbDelete 
+  set dinheiro = 7487483
+  where id_cliente = 4
+
+  alter TABLE tbdelete
+  add senha VARCHAR(30)
+
+--apagando uma coluna
+
+alter TABLE tbDelete
+drop COLUMN senha
+
+alter TABLE tbDelete
+drop column dinheiro
+
+
+--alterando o tipi de dados na tabela
+
+alter table tbDelete
+  add din VARCHAR(100)
+
+  exec sp_columns tbdelete
+
+alter TABLE tbdelete
+alter column din NUMERIC(19)
+
+
+drop table tbDelete
+
+----------------------------------update
+
+
+
+SELECT * into ttemp from Cliente
+
+select * from ttemp
+
+---jeito errado
+update ttemp
+set sexo = 'm'
+
+--drop TABLE ttemp
+
+update ttemp
+set sexo = LOWER(sexo),
+          nome = UPPER(nome)
+
+drop TABLE ttemp
+
+
+--transaction
+
+SELECT * into ttemp from Cliente
+
+SELECT * from ttemp
+
+
+begin TRANSACTION
+
+UPDATE ttemp
+  set sexo = LOWER(sexo)
+COMMIT  
+
+
+begin TRANSACTION
+update ttemp
+set sexo = UPPER(sexo)
+ROLLBACK
+
+
+--begin TRANSACTION
+  --drop table ttemp
+--rollback
+
+declare @tr1 VARCHAR(100)
+
+SELECT @tr1 = 'transação delete'
+
+
+begin TRANSACTION @tr1
+delete from ttemp
+  WHERE nome like '%ana%'
+  COMMIT TRANSACTION @tr1
+
+if OBJECT_ID('tabelaTeste','U') is not NULL
+  drop TABLE tabelaTeste
+GO
+
+create TABLE tabelaTeste(id int primary key, letra char(1))
+
+--iniciando a variavel de controle de transaction(@@TRANCOUNT  para 1)
+
+begin TRANSACTION TR1
+    PRINT 'transaction : contador depois do begin  = ' + CAST(@@TRANCOUNT as NVARCHAR(10))
+
+    insert  into tabelaTeste (id,letra) VALUES (1,'A')
+
+
+begin TRANSACTION TR2
+      print 'transaction: contador depois do 2º begin = ' + CAST(@@TRANCOUNT AS NVARCHAR(10))
+
+      INSERT INTO tabelaTeste(id,letra) VALUES(2, 'B')
+
+
+begin TRANSACTION TR3
+    print 'transaction: contador depois do 3º begin = '+ CAST(@@TRANCOUNT as nvarchar(10))
+
+    insert into tabelaTeste(id,letra) values(3,'C')
+
+
+
+COMMIT transaction TR2
+    print 'transaction: contador depois do commit TR2 = ' + CAST(@@TRANCOUNT as nvarchar(10))
+
+
+COMMIT TRANSACTION TR1
+  print ' transaction: contador depois do commit TR1 = ' + CAST(@@TRANCOUNT AS NVARCHAR(10))
+
+
+
+COMMIT TRANSACTION TR3
+  print ' transaction: contador depois do commit TR3 = ' + CAST(@@TRANCOUNT AS NVARCHAR(10))
+
+
+--if e else
+
+SELECT * into ttemp from Cliente
+
+if 10 < 20
+  SELECT '10 é maior que 20'
+ELSE 
+  SELECT '10 é menor que 20'
+
+
+IF DATENAME(WEEKDAY, GETDATE()) IN ('Sábado', 'domingo')
+  SELECT 'estamos no final de semana'
+ELSE
+  SELECT 'estamos no meio de semana'
+
+
+--variaveis globais
+
+SELECT @@SERVERNAME
+SELECT @@LANGUAGE
+
+DECLARE @VIDADE INT
+DECLARE @vParam INT
+
+set @VIDADE = 30
+set @vParam = 29
+
+
+if  @VIDADE >= @vParam
+  SELECT c.nome,c.data_nascimento ,DATEDIFF(year, data_nascimento, GETDATE()) as idade
+    from Cliente c
+      where DATEDIFF(YEAR, data_nascimento, GETDATE()) >= @VIDADE
+        order by 3 ASC
+ELSE
+  SELECT c.nome,c.data_nascimento ,DATEDIFF(year, data_nascimento, GETDATE()) as idade
+    from Cliente c
+      where DATEDIFF(YEAR, data_nascimento, GETDATE()) < @VIDADE
+        order by 3 ASC
+ 
+
+ drop TABLE ttemp
+
+ --while
+
+ SELECT * into ttemp from Cliente
+
+ --substituição de valores com while
+
+ DECLARE @vString VARCHAR(100)
+ set @vString = 'sql                server              |'
+
+ WHILE CHARINDEX('  ',@vString) > 0
+ BEGIN
+  set @vString = REPLACE(@vString,'  ', ' ') 
+END
+
+SELECT @vString
+-------------------
+
+declare @vcount INT
+set @vcount = 1
+
+
+while (@vcount <= 100000)
+BEGIN
+  print ' contador: ' + CONVERT(VARCHAR, @vcount)
+      SET @vcount = @vcount + 1
+end
+
+-----------------
+
+declare @vcount1 INT
+set @vcount1 = 1
+
+WHILE(@vcount1 <= 10)
+begin 
+  PRINT'o contador esta em' + CONVERT(VARCHAR, @vcount1)
+    if @vcount1 = 7
+      BREAK
+  set  @vcount1 = @vcount1 + 1
+END
+
+declare @vcount2 INT
+set @vcount2 = 1
+
+WHILE (@vcount2 <= 17)
+BEGIN
+  if @vcount2 % 2 <> 0
+    BEGIN
+      set @vcount2 = @vcount2 + 1
+      CONTINUE
+    end
+      PRINT ' o valor é ' + CONVERT(VARCHAR,@vcount2)
+      set @vcount2 = @vcount2 + 1
+end
+
+--CASE
+
+
+
+SELECT x.*
+  into tttemp
+    from (
+          SELECT ROW_NUMBER() over(order by id_cliente) as linha,
+            y.id_cliente,y.nome,y.sexo,y.nome as nome_produto, y.quantidade_produto,y.preco
+          from(
+              SELECT c.id_cliente, 
+                      c.nome,
+                      c.sexo,
+                      p.nome as nome_produto, 
+                      ccp.quantidade_produto, 
+                      p.preco
+                From Cliente_produto cp  
+                    inner join Cliente c on (c.id_cliente = cp.id_cliente)
+                    inner join Produto p on (p.id_produto = cp.id_produto)
+                    inner join Carrinho_cliente_produto ccp on (ccp.id_carrinho_produto = p.id_produto)
+
+                )y
+    )x
+
+
+SELECT t.nome, 
+       case t.sexo
+                  when 'M' then 'Masculino'
+                  when 'F' then 'Feminino'
+                else 'verifique' 
+          END as sexo,
+          t.nome_produto
+
+  from tttemp t 
+
+
+
+------
+
+SELECT t.nome, t.preco
+  from tttemp t 
+
+
+  --------- begin ... enc
+
+  declare @vContador INT
+  set @vContador = 1
+
+  while @vContador < 10
+    BEGIN
+        print 'contador  ' + CONVERT(varchar,@vContador)
+        set @vContador += 1
+    end
+
+-- sem begin
+
+
+begin TRANSACTION
+    IF @@TRANCOUNT = 0 
+        SELECT T.nome, t.sexo, t.quantidade_produto
+          FROM tttemp T 
+        where sexo = 'M'
+ROLLBACK TRANSACTION
+
+--------------indices
+
+SELECT t.id_cliente, t.sexo, sum(t.preco) as "preço somado de todoso so produtos",
+ SUM(ISNULL(t.quantidade_produto , 0)) as "quantidade total de produtos comprados"
+  from tttemp t 
+  inner join Cliente c on c.id_cliente = t.id_cliente
+  group by t.id_cliente,t.sexo
+
+
+create INDEX idx_tttemp  on tttemp(id_cliente)
+
+
+drop index tttemp.idx_tttemp
